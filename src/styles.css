@@ -1,0 +1,691 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+  --glass-bg: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.14);
+  --accent1: #FF006E;
+  --accent2: #7A2BFF;
+  --deep1: #0A0014;
+  --deep2: #16002C;
+}
+
+html,body,#root{height:100%}
+body{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;
+  margin:0;
+  background: linear-gradient(180deg, var(--deep1), var(--deep2));
+  color: #fff;
+}
+
+/* Liquid animated background using the image as subtle overlay */
+.liquid-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: radial-gradient(900px circle at 20% 10%, rgba(255,0,110,0.12), transparent 20%),
+              radial-gradient(1000px circle at 80% 70%, rgba(122,43,255,0.14), transparent 30%),
+              linear-gradient(180deg, rgba(10,0,20,0.9), rgba(22,0,44,0.95));
+  background-size: 180% 180%;
+  animation: liquidMove 14s ease-in-out infinite;
+}
+
+/* procedural liquid shapes overlay (no image) */
+.liquid-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.liquid-overlay::before, .liquid-overlay::after {
+  content: '';
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  filter: blur(120px) saturate(140%);
+  opacity: 0.35;
+}
+.liquid-overlay::before {
+  left: -10vmin; top: -20vmin;
+  background: radial-gradient(circle at 30% 30%, rgba(255,0,110,0.35), rgba(122,43,255,0.18) 40%, transparent 60%);
+}
+.liquid-overlay::after {
+  right: -10vmin; bottom: -20vmin;
+  background: radial-gradient(circle at 70% 70%, rgba(122,43,255,0.28), rgba(10,0,20,0.02) 40%, transparent 60%);
+}
+
+@keyframes liquidMove {
+  0% { background-position: 0% 0%, 100% 100%, 0 0; }
+  50% { background-position: 50% 80%, 30% 20%, 0 0; }
+  100% { background-position: 0% 0%, 100% 100%, 0 0; }
+}
+
+/* Glass card base */
+.glass {
+  position: relative;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  box-shadow: 0 8px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+/* Big Liquid Button */
+.btn-liquid {
+  border-radius: 14px; padding: 14px 28px; font-size: 18px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 34px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 20px;
+  color: white;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 10px 30px rgba(122,43,255,0.06), 0 6px 18px rgba(0,0,0,0.6);
+  backdrop-filter: blur(14px);
+  transition: transform .18s ease, box-shadow .18s ease;
+  overflow: hidden;
+}
+.btn-liquid::after{
+  content:'';
+  position:absolute;
+  right:-40%;
+  top:-30%;
+  width:200%;
+  height:160%;
+  background: radial-gradient(600px 200px at 20% 10%, rgba(255,255,255,0.06), transparent 20%),
+             linear-gradient(90deg, rgba(255,255,255,0.02), transparent 60%);
+  transform: rotate(-15deg);
+  mix-blend-mode: overlay;
+  opacity:0.9;
+}
+.btn-liquid:hover{ transform: translateY(-6px) scale(1.01); box-shadow: 0 18px 50px rgba(122,43,255,0.16); }
+
+/* small pill button */
+.btn-pill {
+  border-radius: 14px; padding: 10px 18px; font-size: 14px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  display:inline-flex;
+  gap:10px;
+  align-items:center;
+  font-weight:600;
+  border:1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+/* circular icon button */
+.btn-circle {
+  width:56px; height:56px; border-radius:999px;
+  display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  box-shadow: 0 12px 30px rgba(122,43,255,0.06), inset 0 2px 6px rgba(255,255,255,0.02);
+}
+
+/* Inputs */
+.input-glass {
+  width:100%;
+  padding:14px 18px;
+  border-radius:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.12);
+  color: #fff;
+  outline: none;
+  transition: box-shadow .18s ease, transform .12s ease;
+  backdrop-filter: blur(10px);
+}
+.input-glass::placeholder{ color: rgba(255,255,255,0.6); }
+.input-glass:focus{ box-shadow: 0 8px 30px rgba(122,43,255,0.14); transform: translateY(-2px); }
+
+/* Footer */
+.app-footer {
+  padding: 20px 12px;
+  text-align: center;
+  color: rgba(255,255,255,0.85);
+  font-size: 14px;
+}
+
+/* container */
+.container {
+  max-width:1100px;
+  margin: 24px auto;
+  padding: 8px;
+}
+
+
+/* Select appearance for dark glass */
+select.input-glass {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+  color: #fff;
+  padding-right: 40px;
+  background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.12) 50%),
+                    linear-gradient(135deg, rgba(255,255,255,0.12) 50%, transparent 50%),
+                    linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0));
+  background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), 100% 0;
+  background-size: 7px 7px, 7px 7px, 2.5em 100%;
+  background-repeat: no-repeat;
+}
+
+/* wrapper for select to show custom arrow */
+.select-wrap { position: relative; }
+.select-wrap::after{
+  content: '▾';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.8);
+  pointer-events: none;
+}
+
+
+.app-footer-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 18px;
+  text-align: center;
+  z-index: 40;
+}
+
+.footer-glass {
+  margin: auto;
+  max-width: 780px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(14px);
+  padding: 16px;
+}
+
+
+select.input-glass {
+  background: rgba(255,255,255,0.05) !important;
+  backdrop-filter: blur(14px);
+  border:1px solid rgba(255,255,255,0.13);
+  animation: glassPulse 4s ease-in-out infinite;
+}
+
+@keyframes glassPulse {
+  0% { box-shadow: 0 0 0 rgba(255,0,110,0.05); }
+  50% { box-shadow: 0 0 18px rgba(255,0,110,0.12); }
+  100% { box-shadow: 0 0 0 rgba(255,0,110,0.05); }
+}
+
+.btn-add-cat {
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.20);
+  backdrop-filter:blur(14px);
+  cursor:pointer;
+  transition:.2s;
+}
+.btn-add-cat:hover {
+  transform:translateY(-3px) scale(1.05);
+}
+
+
+select.input-glass {
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  background:rgba(255,255,255,0.05)!important;
+  color:white!important;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.12);
+}
+select.input-glass option {
+  background:#110018;
+  color:white;
+}
+.btn-back {
+  padding:6px 14px;
+  border-radius:10px;
+  height:38px;
+  font-size:14px;
+}
+.btn-google {
+  background:rgba(255,0,0,0.25);
+  border:1px solid rgba(255,0,0,0.35);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+
+
+/* Strong select override for all browsers */
+select.input-glass, select.input-glass:-internal-autofill-selected {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-color: rgba(255,255,255,0.03) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  padding: 12px 18px !important;
+  border-radius: 12px !important;
+  background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.06) 50%),
+                    linear-gradient(135deg, rgba(255,255,255,0.06) 50%, transparent 50%),
+                    linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0));
+  background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), 100% 0;
+  background-size: 7px 7px, 7px 7px, 2.5em 100%;
+  background-repeat: no-repeat;
+}
+
+/* Option style when dropdown open */
+select.input-glass option {
+  background: linear-gradient(180deg, rgba(10,0,20,0.95), rgba(22,0,44,0.95));
+  color: #fff;
+}
+/* BOTÃO ENTRAR – Glass padrão */
+.btn-login-enter {
+  padding: 14px 26px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+  backdrop-filter: blur(12px);
+  color: white;
+  transition: .25s ease;
+}
+.btn-login-enter:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.55);
+}/* Botão Entrar (Glass pequeno e uniforme) */
+.btn-login-small {
+  padding: 12px 20px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+  backdrop-filter: blur(10px);
+  transition: 0.25s ease;
+}
+.btn-login-small:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+}
+
+/* Botão Google — clean, sem ícone, degradê vermelho → rosa */
+.btn-google-small {
+  padding: 12px 20px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 15px;
+  color: white;
+  background: linear-gradient(135deg, #ff003c, #ff2c72, #ff6aa9);
+  border: 1px solid rgba(255, 40, 90, 0.5);
+  backdrop-filter: blur(10px);
+  transition: 0.25s ease;
+}
+.btn-google-small:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(255,0,80,0.35);
+}
+/* Botão padrão degradê vermelho → rosa (igual Login Google) */
+.btn-red-gradient {
+  padding: 12px 20px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 15px;
+  color: white;
+  background: linear-gradient(135deg, #ff003c, #ff2c72, #ff6aa9);
+  border: 1px solid rgba(255, 40, 90, 0.5);
+  backdrop-filter: blur(10px);
+  transition: 0.25s ease;
+}
+.btn-red-gradient:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(255,0,80,0.35);
+}
+
+/* Botão voltar */
+.btn-back-small {
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
+  backdrop-filter: blur(10px);
+  transition: 0.2s ease;
+}
+.btn-back-small:hover {
+  transform: translateY(-2px);
+}
+
+/* Ajuste do select Categoria para ficar igual aos outros inputs */
+select.input-glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  padding-left: 18px !important;
+}
+/* Botão grande para adicionar categoria (tamanho original + degradê) */
+.btn-add-cat-big {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #ff003c, #ff2c72, #ff6aa9);
+  border: 1px solid rgba(255, 40, 90, 0.5);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.25s ease;
+}
+.btn-add-cat-big:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(255,0,80,0.35);
+}
+/* -----------------------------------
+   BOTÃO DEGRADÊ ANIMADO (VERMELHO → ROSA)
+   Para: Sair, Voltar, Salvar, Google, + Categoria
+----------------------------------- */
+
+.btn-red-animated {
+  padding: 12px 22px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 15px;
+  color: white;
+  background: linear-gradient(135deg, #ff003c, #ff2c72, #ff6aa9);
+  background-size: 200% 200%;
+  border: 1px solid rgba(255, 40, 90, 0.55);
+  backdrop-filter: blur(10px);
+  transition: 0.35s ease;
+  box-shadow: 0 5px 18px rgba(255, 0, 80, 0.28);
+}
+
+.btn-red-animated:hover {
+  background-position: 100% 0%;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 12px 35px rgba(255, 0, 90, 0.45);
+}
+
+.btn-red-animated:active {
+  transform: scale(0.97);
+}
+
+/* Versão maior usada no botão "+" */
+.btn-red-animated-big {
+  width: 55px;
+  height: 55px;
+  border-radius: 16px;
+  font-size: 30px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #ff003c, #ff2c72, #ff6aa9);
+  background-size: 200% 200%;
+  border: 1px solid rgba(255, 40, 90, 0.55);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.35s ease;
+  box-shadow: 0 8px 25px rgba(255, 0, 95, 0.38);
+}
+
+.btn-red-animated-big:hover {
+  background-position: 100% 0%;
+  transform: translateY(-2px) scale(1.06);
+}
+/* BOTÃO DEGRADÊ ANIMADO (VERMELHO → ROSA) */
+.btn-red-animated {
+  padding: 12px 22px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 15px;
+  color: white;
+  background: linear-gradient(135deg, #ff003c, #ff2c72, #ff6aa9);
+  background-size: 200% 200%;
+  border: 1px solid rgba(255, 40, 90, 0.55);
+  backdrop-filter: blur(10px);
+  transition: 0.35s ease;
+  box-shadow: 0 5px 18px rgba(255, 0, 80, 0.28);
+}
+.btn-red-animated:hover {
+  background-position: 100% 0%;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 12px 35px rgba(255,0,90,0.45);
+}
+.btn-red-animated:active {
+  transform: scale(0.97);
+}
+/* BOTÃO DEGRADÊ ANIMADO (VERMELHO → ROSA) */
+.btn-red-animated {
+  padding: 12px 22px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 15px;
+  color: white;
+  background: linear-gradient(135deg, #ff003c, #ff2c72, #ff6aa9);
+  background-size: 200% 200%;
+  border: 1px solid rgba(255, 40, 90, 0.55);
+  backdrop-filter: blur(10px);
+  transition: 0.35s ease;
+  box-shadow: 0 5px 18px rgba(255, 0, 80, 0.28);
+}
+.btn-red-animated:hover {
+  background-position: 100% 0%;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 12px 35px rgba(255,0,90,0.45);
+}
+.btn-red-animated:active {
+  transform: scale(0.97);
+}
+/* Estilo para o menu aberto do SELECT (dropdown) */
+select.input-glass option {
+  background: #1a0c22 !important;       /* fundo escuro igual ao projeto */
+  color: white !important;               /* texto branco */
+  border: none !important;
+  padding: 10px !important;
+}
+
+/* Evita fundo branco ao focar */
+select.input-glass option:checked,
+select.input-glass option:hover {
+  background: #301437 !important;        /* um roxo mais claro */
+  color: white !important;
+}
+/* -------- Verses Footer (separado) -------- */
+.verses-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 40;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border-top: 1px solid rgba(255,255,255,0.04);
+  color: #fff;
+  padding: 18px 12px;
+  box-sizing: border-box;
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.footer-left { display:flex; flex-direction:column; gap:4px; }
+.footer-sub { font-size: 13px; color: rgba(255,255,255,0.65); }
+
+.footer-nav { display:flex; gap:12px; align-items:center; }
+.footer-link { color: rgba(255,255,255,0.9); text-decoration:none; font-size:14px; }
+.footer-link:hover { text-decoration: underline; }
+
+.footer-right { font-size: 14px; color: rgba(255,255,255,0.9); }
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .footer-inner { padding: 6px 8px; }
+  .footer-nav { width: 100%; justify-content: center; margin-top: 8px; }
+  .footer-left, .footer-right { width: 100%; text-align: center; }
+  .verses-footer { padding: 12px 10px; }
+}
+
+/* ========================================
+   RESPONSIVIDADE MOBILE
+   ======================================== */
+
+/* Ajustes gerais para mobile */
+@media (max-width: 640px) {
+  /* Container com padding menor em mobile */
+  .container {
+    padding: 12px;
+    margin: 16px auto;
+  }
+
+  /* Títulos menores em mobile */
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  h3 {
+    font-size: 1.1rem !important;
+  }
+
+  /* Glass cards com padding menor */
+  .glass {
+    padding: 16px !important;
+  }
+
+  /* Botões com altura e padding ajustados */
+  .btn-red-animated,
+  .btn-pill,
+  .btn-login-small,
+  .btn-google-small {
+    padding: 14px 20px;
+    font-size: 14px;
+    min-height: 44px; /* Tamanho mínimo touch-friendly */
+  }
+
+  /* Inputs com altura mínima para mobile */
+  .input-glass {
+    min-height: 44px;
+    font-size: 16px; /* Evita zoom no iOS */
+  }
+
+  /* Select com altura mínima */
+  select.input-glass {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  /* Footer com texto menor e padding ajustado */
+  .app-footer-fixed {
+    padding: 12px 8px;
+  }
+
+  .footer-glass {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  /* Tabelas responsivas */
+  table {
+    font-size: 13px;
+  }
+
+  table th,
+  table td {
+    padding: 8px 4px !important;
+  }
+
+  /* Grid de cards em coluna única */
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Ajustes para tablets pequenos */
+@media (min-width: 641px) and (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 2rem !important;
+  }
+}
+
+/* Ajustes específicos para telas muito pequenas */
+@media (max-width: 375px) {
+  .container {
+    padding: 8px;
+  }
+
+  .glass {
+    padding: 12px !important;
+  }
+
+  .btn-red-animated,
+  .btn-pill {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .footer-glass {
+    font-size: 11px;
+  }
+}
+
+/* Correção específica para inputs de data */
+input[type="date"].input-glass {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ajuste do calendário nativo em mobile */
+@media (max-width: 640px) {
+  input[type="date"].input-glass {
+    font-size: 14px;
+    padding: 12px 14px;
+  }
+  
+  /* Labels dos filtros */
+  label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+}

@@ -1,0 +1,150 @@
+import React, { useEffect, useState } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { collection, query, where, getDocs } from 'firebase/firestore'
+import { db } from '../firebase'
+import { jsPDF } from 'jspdf'
+import autoTable from 'jspdf-autotable';import { saveAs } from 'file-saver'
+import { motion } from 'framer-motion'
+
+export default function Relatorios(){
+  const { user } = useAuth()
+  const [start, setStart] = useState('')
+  const [end, setEnd] = useState('')
+  const [typeFilter, setTypeFilter] = useState('all')
+  const [items, setItems] = useState([])
+  const [summary, setSummary] = useState({ count:0, total:0, entrada:0, saida:0, investimento:0 })
+  const [categoriesMap, setCategoriesMap] = useState({})
+
+  useEffect(()=> { load(); loadCategories(); }, [])
+
+  async function load(){
+    if(!user) return
+    const q = query(collection(db, 'users', user.uid, 'transactions'))
+    const snap = await getDocs(q)
+    const data = snap.docs.map(d=>({ id:d.id, ...d.data() }))
+    setItems(data)
+    computeSummary(data)
+  }
+
+  async function loadCategories(){
+    if(!user) return
+    const snap = await getDocs(collection(db, 'users', user.uid, 'categories'))
+    const map = {}
+    snap.docs.forEach(d => { map[d.id] = d.data().name })
+    setCategoriesMap(map)
+  }
+
+  function computeSummary(list){
+    const filtered = list.filter(i=>{
+      const date = i.date ? new Date(i.date.seconds * 1000) : new Date()
+      if(start && date < new Date(start)) return false
+      if(end && date > new Date(end)) return false
+      if(typeFilter !== 'all' && i.type !== typeFilter) return false
+      return true
+    })
+    const total = filtered.reduce((s, i)=> s + Number(i.value || 0), 0)
+    const entrada = filtered.filter(i=> i.type==='entrada').length
+    const saida = filtered.filter(i=> i.type==='saida').length
+    const investimento = filtered.filter(i=> i.type==='investimento').length
+    setSummary({ count: filtered.length, total, entrada, saida, investimento })
+    setFilteredList(filtered)
+  }
+
+  const [filteredList, setFilteredList] = useState([])
+
+  function applyFilters(){
+    computeSummary(items)
+  }
+
+  
+function exportPDF() {
+  const doc = new jsPDF();
+
+  // Use the filtered list (filteredList) if available, otherwise fallback to items
+  const rowsSource = (typeof filteredList !== 'undefined' && filteredList.length) ? filteredList : items || [];
+
+  const rows = rowsSource.map(i => [
+    i.title || i.titulo || '',
+    i.type || i.tipo || '',
+    'R$ ' + ((Number(i.value) || Number(i.valor) || 0).toFixed(2)),
+    (categoriesMap && categoriesMap[i.categoryId]) ? categoriesMap[i.categoryId] : (i.categoryName || '-'),
+    i.date ? (i.date.seconds ? new Date(i.date.seconds*1000).toLocaleDateString() : new Date(i.date).toLocaleDateString()) : '-'
+  ]);
+
+  autoTable(doc, {
+    head: [['Título','Tipo','Valor','Categoria','Data']],
+    body: rows,
+    startY: 36
+  });
+
+  doc.save('relatorio.pdf');
+}
+
+    doc.save('relatorio.pdf')
+  }
+
+    return (
+    <div>
+      <header className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-semibold">Relatórios</h1>
+        <div>
+          <button className="btn-pill" onClick={()=> window.location.href = '/'}>Voltar</button>
+        </div>
+      </header>
+
+      <div className="glass p-6 relative mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <input type="date" value={start} onChange={e=>setStart(e.target.value)} className="input-glass" />
+          <input type="date" value={end} onChange={e=>setEnd(e.target.value)} className="input-glass" />
+          <select value={typeFilter} onChange={e=>setTypeFilter(e.target.value)} className="input-glass">
+            <option value="all">Todos</option>
+            <option value="entrada">Entradas</option>
+            <option value="saida">Saídas</option>
+            <option value="investimento">Investimentos</option>
+          </select>
+          <div className="flex gap-2">
+            <button className="btn-pill" style={{padding:"8px 14px"}} onClick={applyFilters}>Aplicar</button>
+            
+            <button className="btn-pill" style={{padding:"8px 14px"}} onClick={exportPDF}>Exportar PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <motion.div className="p-6 glass" initial={{ y: 10, opacity:0 }} animate={{ y:0, opacity:1 }}>
+        <h3 className="mb-3">Movimentações</h3>
+        <p>Total de movimentações: <strong>{summary.count}</strong></p>
+        <p>Valor total: <strong>R$ {summary.total.toFixed(2)}</strong></p>
+        <p>Entradas: {summary.entrada} — Saídas: {summary.saida} — Investimentos: {summary.investimento}</p>
+      </motion.div>
+
+      <div className="mt-6 p-6 glass">
+        <h3 className="mb-3">Movimentações</h3>
+        <div className="overflow-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="text-sm text-white/80">
+                <th className="p-2">Título</th>
+                <th className="p-2">Tipo</th>
+                <th className="p-2">Valor</th>
+                <th className="p-2">Categoria</th>
+                <th className="p-2">Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredList.map(it=> (
+                <tr key={it.id} className="border-t border-white/6">
+                  <td className="p-2">{it.title}</td>
+                  <td className="p-2">{it.type}</td>
+                  <td className="p-2">R$ {(Number(it.value)||0).toFixed(2)}</td>
+                  <td className="p-2">{ categoriesMap[it.categoryId] || '-' }</td>
+                  <td className="p-2">{it.date ? new Date(it.date.seconds*1000).toLocaleDateString() : '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+}
